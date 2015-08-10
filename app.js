@@ -4,9 +4,9 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var connect = require('connect');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var stations = require('./routes/stations');
 
 var app = express();
 
@@ -16,14 +16,20 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(connect.compress());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
-app.use('/users', users);
+// Por REST
+app.use('/stations', stations);
+/*app.use('/request-route', routes.index);
+app.use('/nearby-stations', routes.nearbyStations);
+app.use('/request-station-info', routes.stationInfo);
+app.use('/request-bus-info', routes.busInfo);
+app.use('/request-route', routes.index);*/
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,21 @@
+var weekDays = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
+
+
+// Verificar si las fechas no dan
+var lastValidDate = null;
+if(respStr.match(/La fecha dada no est/))
+{
+	lastValidDate = respStr.match(/lido desde [0-9|.]* y hasta [0-9|.]*/)[0];
+	lastValidDate = lastValidDate.substr(lastValidDate.length-9, lastValidDate.length);
+	lastValidDate = lastValidDate.slice(0, -1);
+	console.log('La fecha limite deberia ser: ', lastValidDate);
+}
+
+if(lastValidDate)
+{
+	var dataDate = lastValidDate.split(/\./);
+	var targetDate = new Date(2000+Number(dataDate[2]), Number(dataDate[1]-1), dataDate[0]);
+
+	dataForm.REQ0JourneyDate = weekDays[targetDate.getDay()] + ', ' + lastValidDate;
+	console.log(dataForm.REQ0JourneyDate);
+}
