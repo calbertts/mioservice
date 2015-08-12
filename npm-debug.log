@@ -1,131 +1,35 @@
 0 info it worked if it ends with ok
 1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
 1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
-1 verbose cli   'install' ]
-2 info using npm@2.10.1
-3 info using node@v0.12.4
-4 verbose readDependencies loading dependencies from D:\Experiments\mioservice\package.json
-5 verbose install where, deps [ 'D:\\Experiments\\mioservice',
-5 verbose install   [ 'Deferred',
-5 verbose install     'body-parser',
-5 verbose install     'cheerio',
-5 verbose install     'connect',
-5 verbose install     'cookie-parser',
-5 verbose install     'debug',
-5 verbose install     'express',
-5 verbose install     'iconv-lite',
-5 verbose install     'jade',
-5 verbose install     'morgan',
-5 verbose install     'request',
-5 verbose install     'serve-favicon' ] ]
-6 verbose install where, peers [ 'D:\\Experiments\\mioservice', [] ]
-7 verbose installManyTop reading for lifecycle D:\Experiments\mioservice\package.json
-8 info preinstall mioservice@1.0.0
-9 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\Deferred\package.json
-10 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\body-parser\package.json
-11 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\cheerio\package.json
-12 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\connect\package.json
-13 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\cookie-parser\package.json
-14 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\debug\package.json
-15 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\express\package.json
-16 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\iconv-lite\package.json
-17 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\jade\package.json
-18 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\morgan\package.json
-19 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\request\package.json
-20 verbose installManyTop reading scoped package data from D:\Experiments\mioservice\node_modules\serve-favicon\package.json
-21 info package.json Deferred@0.1.1 No license field.
-22 info package.json cheerio@0.16.0 No license field.
-23 info package.json request@2.30.0 No license field.
-24 verbose readDependencies loading dependencies from D:\Experiments\mioservice\package.json
-25 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\Deferred\package.json
-26 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\body-parser\package.json
-27 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\cheerio\package.json
-28 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\connect\package.json
-29 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\cookie-parser\package.json
-30 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\debug\package.json
-31 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\express\package.json
-32 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\iconv-lite\package.json
-33 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\jade\package.json
-34 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\morgan\package.json
-35 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\request\package.json
-36 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\serve-favicon\package.json
-37 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\.bin\jade\package.json
-38 verbose targetResolver reading package data from D:\Experiments\mioservice\node_modules\.bin\jade.cmd\package.json
-39 verbose already installed skipping request@~2.30.0 D:\Experiments\mioservice
-40 verbose already installed skipping serve-favicon@~2.3.0 D:\Experiments\mioservice
-41 silly cache add args [ 'Deferred@~0.7.2', null ]
-42 verbose cache add spec Deferred@~0.7.2
-43 silly cache add parsed spec { raw: 'Deferred@~0.7.2',
-43 silly cache add   scope: null,
-43 silly cache add   name: 'Deferred',
-43 silly cache add   rawSpec: '~0.7.2',
-43 silly cache add   spec: '>=0.7.2 <0.8.0',
-43 silly cache add   type: 'range' }
-44 silly addNamed Deferred@>=0.7.2 <0.8.0
-45 verbose addNamed ">=0.7.2 <0.8.0" is a valid semver range for Deferred
-46 silly addNameRange { name: 'Deferred', range: '>=0.7.2 <0.8.0', hasData: false }
-47 silly mapToRegistry name Deferred
-48 silly mapToRegistry using default registry
-49 silly mapToRegistry registry https://registry.npmjs.org/
-50 silly mapToRegistry uri https://registry.npmjs.org/Deferred
-51 verbose addNameRange registry:https://registry.npmjs.org/Deferred not in flight; fetching
-52 verbose already installed skipping body-parser@~1.13.2 D:\Experiments\mioservice
-53 verbose already installed skipping cheerio@~0.16.0 D:\Experiments\mioservice
-54 verbose already installed skipping connect@2.x D:\Experiments\mioservice
-55 verbose already installed skipping cookie-parser@~1.3.5 D:\Experiments\mioservice
-56 verbose already installed skipping debug@~2.2.0 D:\Experiments\mioservice
-57 verbose already installed skipping express@~4.13.1 D:\Experiments\mioservice
-58 verbose already installed skipping iconv-lite@^0.4.11 D:\Experiments\mioservice
-59 verbose already installed skipping jade@~1.11.0 D:\Experiments\mioservice
-60 verbose already installed skipping morgan@~1.6.1 D:\Experiments\mioservice
-61 verbose request uri https://registry.npmjs.org/Deferred
-62 verbose request no auth needed
-63 info attempt registry request try #1 at 17:03:07
-64 verbose request id f0756068dd0e97bd
-65 verbose etag "4QYLZJFC5X3XDADVPPX084WAB"
-66 http request GET https://registry.npmjs.org/Deferred
-67 http 304 https://registry.npmjs.org/Deferred
-68 silly get cb [ 304,
-68 silly get   { date: 'Mon, 10 Aug 2015 22:03:14 GMT',
-68 silly get     via: '1.1 varnish',
-68 silly get     'cache-control': 'max-age=60',
-68 silly get     etag: '"4QYLZJFC5X3XDADVPPX084WAB"',
-68 silly get     age: '0',
-68 silly get     connection: 'keep-alive',
-68 silly get     'x-served-by': 'cache-ord1726-ORD',
-68 silly get     'x-cache': 'MISS',
-68 silly get     'x-cache-hits': '0',
-68 silly get     'x-timer': 'S1439244194.665133,VS0,VE42',
-68 silly get     vary: 'Accept' } ]
-69 verbose etag https://registry.npmjs.org/Deferred from cache
-70 verbose get saving Deferred to C:\Users\Carlos\AppData\Roaming\npm-cache\registry.npmjs.org\Deferred\.cache.json
-71 silly addNameRange number 2 { name: 'Deferred', range: '>=0.7.2 <0.8.0', hasData: true }
-72 silly addNameRange versions [ 'Deferred', [ '0.0.3', '0.0.4', '0.1.0', '0.1.1' ] ]
-73 verbose stack Error: No compatible version found: Deferred@'>=0.7.2 <0.8.0'
-73 verbose stack Valid install targets:
-73 verbose stack ["0.0.3","0.0.4","0.1.0","0.1.1"]
-73 verbose stack
-73 verbose stack     at installTargetsError (C:\Program Files\nodejs\node_modules\npm\lib\cache\add-named.js:274:12)
-73 verbose stack     at next (C:\Program Files\nodejs\node_modules\npm\lib\cache\add-named.js:253:17)
-73 verbose stack     at setData (C:\Program Files\nodejs\node_modules\npm\lib\cache\add-named.js:230:5)
-73 verbose stack     at RES (C:\Program Files\nodejs\node_modules\npm\node_modules\inflight\inflight.js:23:14)
-73 verbose stack     at f (C:\Program Files\nodejs\node_modules\npm\node_modules\once\once.js:17:25)
-73 verbose stack     at fixName (C:\Program Files\nodejs\node_modules\npm\lib\cache\add-named.js:29:5)
-73 verbose stack     at saved (C:\Program Files\nodejs\node_modules\npm\lib\cache\caching-client.js:173:7)
-73 verbose stack     at FSReqWrap.oncomplete (fs.js:95:15)
-74 verbose cwd D:\Experiments\mioservice
-75 error Windows_NT 6.3.9600
-76 error argv "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install"
-77 error node v0.12.4
-78 error npm  v2.10.1
-79 error code ETARGET
-80 error notarget No compatible version found: Deferred@'>=0.7.2 <0.8.0'
-80 error notarget Valid install targets:
-80 error notarget ["0.0.3","0.0.4","0.1.0","0.1.1"]
-80 error notarget
-80 error notarget This is most likely not a problem with npm itself.
-80 error notarget In most cases you or one of your dependencies are requesting
-80 error notarget a package version that doesn't exist.
-80 error notarget
-80 error notarget It was specified as a dependency of 'mioservice'
-81 verbose exit [ 1, true ]
+1 verbose cli   'run',
+1 verbose cli   'debug' ]
+2 info using npm@2.11.3
+3 info using node@v0.12.7
+4 verbose stack Error: Failed to parse json
+4 verbose stack Trailing comma in object at 8:3
+4 verbose stack   },
+4 verbose stack   ^
+4 verbose stack     at parseError (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\read-json.js:379:11)
+4 verbose stack     at parseJson (C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\read-json.js:68:23)
+4 verbose stack     at C:\Program Files\nodejs\node_modules\npm\node_modules\read-package-json\read-json.js:48:5
+4 verbose stack     at evalmachine.<anonymous>:334:14
+4 verbose stack     at C:\Program Files\nodejs\node_modules\npm\node_modules\graceful-fs\graceful-fs.js:102:5
+4 verbose stack     at FSReqWrap.oncomplete (evalmachine.<anonymous>:95:15)
+5 verbose cwd D:\Documents\Projects\mioservice
+6 error Windows_NT 6.3.9600
+7 error argv "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "run" "debug"
+8 error node v0.12.7
+9 error npm  v2.11.3
+10 error file D:\Documents\Projects\mioservice\package.json
+11 error code EJSONPARSE
+12 error Failed to parse json
+12 error Trailing comma in object at 8:3
+12 error   },
+12 error   ^
+13 error File: D:\Documents\Projects\mioservice\package.json
+14 error Failed to parse package.json data.
+14 error package.json must be actual JSON, not just JavaScript.
+14 error
+14 error This is not a bug in npm.
+14 error Tell the package author to fix their package.json file. JSON.parse
+15 verbose exit [ 1, true ]

@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var connect = require('connect');
 
 var stations = require('./routes/stations');
+var buses = require('./routes/buses');
+var card = require('./routes/card');
 
 var app = express();
 
@@ -25,11 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Por REST
 app.use('/stations', stations);
-/*app.use('/request-route', routes.index);
-app.use('/nearby-stations', routes.nearbyStations);
-app.use('/request-station-info', routes.stationInfo);
-app.use('/request-bus-info', routes.busInfo);
-app.use('/request-route', routes.index);*/
+app.use('/buses', buses);
+app.use('/card', card);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

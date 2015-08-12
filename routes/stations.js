@@ -13,7 +13,6 @@
 
 var express = require('express')
 var router = express.Router()
-var request = require('request')
 var queryString = require('querystring')
 var cheerio = require('cheerio')
 var Deferred = require('Deferred')
@@ -73,7 +72,7 @@ router.get('/nearby', function(req, res, next)
 	{
 		res.json({
 			status: 'ERROR',
-			message: 'Coords are missing'
+			message: 'MISSING_COORDS'
 		})
 	}
 })
@@ -83,7 +82,7 @@ router.get('/nearby', function(req, res, next)
 	End-Point to query the information regard to a station
 
 	@param id Station's id
-	@param mode 'dep' to see the time to go or 'arr' to see the time to arrive
+	@param mode 'dep' to see the depart time or 'arr' to see the arrive time
 	@param max Maximum of results
 	@param routes If it's true all routes will be included from the time to end of day (default value is false)
 	@param journeys If it's true all journeys per each route will be included (default value is false)
@@ -120,10 +119,16 @@ router.get('/info', function(req, res, next)
 			stationInfoResult = Tools.getData(stationRequestURL).done(function(resp)
 			{
 				var stationInfo = JSON.parse(resp.replace('SLs.sls=', '').replace(';SLs.showSuggestion();', ''))
-				item = stationInfo.suggestions[0]
-				itemId = item.id.match(/L=[^@]*/)[0].replace('L=0', '')
 
-				coords = Tools.getTransformCoordsForMaps(item.xcoord, item.ycoord)
+				console.log('length', stationInfo.suggestions.length);
+
+				if(stationInfo.suggestions.length > 0)
+				{
+					item = stationInfo.suggestions[0]
+					itemId = item.id.match(/L=0([^@]*)/)[1]
+
+					coords = Tools.getTransformCoordsForMaps(item.xcoord, item.ycoord)
+				}
 			})
 
 			/*
@@ -158,7 +163,7 @@ router.get('/info', function(req, res, next)
 						if(row.find('td.product > a').html() != null)
 						{
 							var time = row.find('td.time').text()
-							var journeyId = row.find('td.product > a').attr('href').match(/hn[^?]*/)[0].replace('hn/', '').replace('/4095','')
+							var journeyId = row.find('td.product > a').attr('href').match(/hn\/([^?]*)/)[1]
 							var bus = row.find('td.product > a').text().trim()
 							var newJourneys = []
 
@@ -168,7 +173,7 @@ router.get('/info', function(req, res, next)
 								var stationsIDs = {}
 
 								row.find('td.timetable > a').each(function(index) {
-									var id = $(this).attr('href').match(/input=[^&]*/)[0].replace('input=', '').replace('&', '')
+									var id = $(this).attr('href').match(/input=([^&]*)/)[1]
 									var name = $(this).text().replace(/\r?\n|\r/g, '')
 
 									stationsIDs[name]  = id
@@ -207,24 +212,34 @@ router.get('/info', function(req, res, next)
 	
 			Deferred.when(stationInfoResult, stationRoutesResult).then(function()
 			{
-				res.json({
-					status: 'OK',
-					stationInfo: {
-						id: itemId,
-						name: item.value,
-						lat: coords.y,
-						lng: coords.x,
-						weight: item.weight,
-						routes: routeData
-					}
-				})
+				if(itemId)
+				{
+					res.json({
+						status: 'OK',
+						stationInfo: {
+							id: itemId,
+							name: item.value,
+							lat: coords.y,
+							lng: coords.x,
+							weight: item.weight,
+							routes: routeData
+						}
+					})
+				}
+				else
+				{
+					res.json({
+						status: 'ERROR',
+						message: 'INVALID_STATION_ID'
+					})
+				}
 			})
 		}
 		else
 		{
 			res.json({
 				status: 'ERROR',
-				message: 'The ID provided is not valid'
+				message: 'INVALID_FORMAT_STATION_ID'
 			})
 		}
 	}
@@ -232,7 +247,7 @@ router.get('/info', function(req, res, next)
 	{
 		res.json({
 			status: 'ERROR',
-			message: 'You must provide a station ID'
+			message: 'MISSING_STATION_ID'
 		})
 	}
 })
@@ -272,7 +287,7 @@ router.get('/suggestions', function(req, res, next)
 					var coords = Tools.getTransformCoordsForMaps(item.xcoord, item.ycoord)
 
 					return {
-						id: item.id.match(/L=[^@]*/)[0].replace('L=0', ''),
+						id: item.id.match(/L=0([^@]*)/)[1],
 						name: item.value,
 						lat: coords.y,
 						lng: coords.x,
@@ -286,7 +301,7 @@ router.get('/suggestions', function(req, res, next)
 	{
 		res.json({
 			status: 'ERROR',
-			message: 'You must provide a search'
+			message: 'MISSING_SEARCH'
 		})
 	}
 })
