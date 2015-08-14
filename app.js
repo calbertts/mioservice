@@ -9,6 +9,7 @@ var connect = require('connect');
 var stations = require('./routes/stations');
 var buses = require('./routes/buses');
 var card = require('./routes/card');
+var travel = require('./routes/travel');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/stations', stations);
 app.use('/buses', buses);
 app.use('/card', card);
+app.use('/travel', travel);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
