@@ -15,8 +15,8 @@ var express = require('express')
 var router = express.Router()
 var queryString = require('querystring')
 var cheerio = require('cheerio')
-var GoogleMapsAPI = require('googlemaps')
 var request = require('request')
+var Deferred = require('Deferred')
 
 var Tools = require('./tools')
 
@@ -31,56 +31,140 @@ var Tools = require('./tools')
  */
 router.get('/connections', function(req, res, next)
 {
-	if('lat' in req.query && 'lng' in req.query)
+	if('startAddress' in req.query && 'endAddress' in req.query)
 	{
-		/*var enterpriseConfig = {
-		  google_client_id:   '259286454011-crssajo0mvtpq0sbjlq4sep651gfcaj3.apps.googleusercontent.com',
-		  google_private_key: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDrvcfSP6IL7bA6\ndtYsaDRH/uVFI1s6UjRzf7+GFOI1ZevEi4N1O04Hdq7dLEJhWRJG0IfBUhrhXQZ+\nBRaResNou4alk0GMCXp1NUaaO8ye6xYlNgcdVGkRVJ61+Q/Quzek1SWuNYNZELq/\n/wGF2dURFrtZRyCP8wJrG3Ay3uA3t93W8FDW8ZOKvj4Uw6/kf5yMycn9ZGuIWVyj\njYE7QcBL9GUoUI0Z/ErecO6W4rqC5EMtFQTIBCP1dZGHEGZEL7irYeTjH4mvnRmN\naBAn4sNlTzFIpD4rFUZ/a9uea3EIi/k0/bWpIOa/Y1O7PQNs6yz2XC3WI8DBBva0\nruql5S6vAgMBAAECggEAahs/p3iQvYG8gnQerlowvf8Svu3NEBEUHrBvSjB4KMS5\nO/v3rXqGAoH+7voO3rYyrcEKeY81Hh6631n28IArGCbf0gLXy+owPjU+lAk6boUt\nsI4C4caui+hkj0+NOMwrnXt6vFDFz/7hr61dyBtl9Y0fwm1rUJ92hTMSazM6BJlW\njDSzFjhcbUoTzTBR4Z5+6eXGDL3yP1UHKuCni/OMIM6n0nCMy1+iDp1Ld6NI+g2h\ngnLwHrpp5PIMPAb4RYn5n19l5tREDHdGLGuEoBpZP8n+jC1hK4WUVbSBvJ6dUJy7\nVTd6uVp2cBqF/sAd+GrFszLc3fX/4O6ZWf30l+vD8QKBgQD42jVR0rn/FWNvkaZL\nGjl7vFioJqsuXiMw9F9NVHeMphLEl2ZRfaaSEwt8+aQffaUXE4rjMd0ybmps6W3t\nCOuL0J3J6W/NkhqyVnu9UkeHBi/Ezq/U8GS3SnGljpUfNuw0UiZYgW5S+MWNmRJF\n1sB+EJuesNEYkoSamdDByGuNHQKBgQDygyr0pXO76gZa2cuQIaEF0gzX4Cp31pLw\np1G6o7Zlh3t1MtGgiv3LsbsQ0qnHxdpz58pLpUzdBFhR4eg2OokA4JbTtH/kGYXr\nzuMmYtmfdk0R7EB+MFaduUQWfzKFaS+boPJWXHhhc+JMiS4wOcS1i6WEJs7dpp3D\noo3pol79OwKBgGUdHM8rZYHdKfMaZkxb0oGRbSCd3a5Qd9IbaWHdcVoH3NZegieY\ne4cdD+zu7p4RCnSO7z8TcsJcFQg97PmER1kfIg35uQD5Xbma5FpvxTp67Av2w4Et\nUG8dY4IWpkbxpRY5TvVlWfOCu5qmWMNh2AMhMmpPhBaM6i57U1R54CGNAoGBAInp\n2kXiyZx2DEMiVMeUuFPtDmy+CKi6GDpPjQUNES9QCv+tdNVN9eMfIfkBNJhthjwf\n90VprfqK/Ack57/fLgaXsm6W2ZxIf4aI01kDIiuzRUUKC+s3ZiqwL25zy7FfDjn9\nH5PJZpRVKL7JzMCUOa/cyLYMs9wNYu7cxMO3GTn9AoGANui72tDBDXtFUKYZORCY\np8uJQphzM4f28vnWb06gPb6sRYS2raALvq/ao06m6ege4We9nBMkkLW743rIuj68\nWe+gQKiy35eB0Jo6iQfPbXGh2fzBiaL7Jkfk0929o//XL2x2PGOgWTZGq/RlUgB7\nQBGh61C1KNTuCC4dcEH3i7g\u003d\n-----END PRIVATE KEY-----\n',
-		  stagger_time:       1000, // for elevationPath
-		  encode_polylines:   false,
-		  secure:             false // use https
-		  //proxy:              'http://127.0.0.1:9999' // optional, set a proxy for HTTP requests
-		}
-		var gmAPI = new GoogleMapsAPI(enterpriseConfig)
-
-		// reverse geocode API
-		var reverseGeocodeParams = {
-		  "latlng":        req.query.lat + "," + req.query.lng,
-		  "result_type":   "street_address",
-		  "language":      "es",
-		  "location_type": "ROOFTOP"
-		}
-
-		gmAPI.reverseGeocode(reverseGeocodeParams, function(err, result){
-		  console.log(result)
-		})
-
-		res.end()*/
-
-		var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+req.query.lat+','+req.query.lng + '&location_type=ROOFTOP&result_type=street_address&key=AIzaSyBYH2V8tBXPKOAO9lCLjp7kj6mc5Hph6vU'
-		console.log(url)
-
-		request(url, function (error, response, body)
-		{
-			console.log(body)
-			var place = JSON.parse(body).results[0]
-
-			address = '';
-			if (place.address_components)
+		Deferred.when(queryGMapsFromAddress(req.query.startAddress), queryGMapsFromAddress(req.query.endAddress)).then(
+			function sucess(addresses)
 			{
-				address = [
-					(place.address_components[0] && place.address_components[0].short_name || ''),
-			        (place.address_components[1] && place.address_components[1].short_name || ''),
-			        (place.address_components[2] && place.address_components[2].short_name || '')
-			    ].join(' ')
+				getConnections(arguments['0'], arguments['1']).then(function(resp)
+				{
+					res.write(resp)
+					res.end()
+				})
+			},
+			function error(error)
+			{
+				res.json({
+					status: 'ERROR',
+					message: 'ERROR_QUERING_ADDRESSES',
+					details: error
+				})
 			}
+		)
+	}
 
-			place["ADDRESS"] = address
-			place["ALL"] = JSON.parse(body)
-			res.json(place)
+	else if('startPoint' in req.query && 'endPoint' in req.query)
+	{
+		res.json({
+			ok: 'ok'
 		})
+		/*var startPoint = {
+			lat: req.query.startPoint.split(',')[0],
+			lng: req.query.startPoint.split(',')[1]
+		}
+
+		var endPoint = {
+			lat: req.query.endPoint.split(',')[0],
+			lng: req.query.endPoint.split(',')[1]
+		}
+
+		Deferred.when(queryGMapsFromCoords(startPoint), queryGMapsFromCoords(endPoint)).then(
+			function sucess(addresses)
+			{
+				res.json({
+					startPoint: arguments['0'],
+					endPoint: arguments['1']
+				})
+			},
+			function error(error)
+			{
+				res.json({
+					status: 'ERROR',
+					message: 'ERROR_QUERING_ADDRESSES',
+					details: error
+				})
+			}
+		)*/
 	}
 })
+
+function queryGMapsFromAddress(address)
+{
+	var deferred = new Deferred()
+
+	var requestParameters = {
+		address: address,
+		location_type: 'ROOFTOP',
+		result_type: 'street_address',
+		components: 'country:co',
+		bounds: '3.292243,-76.587119|3.504729,-76.464896',
+		key: 'AIzaSyBYH2V8tBXPKOAO9lCLjp7kj6mc5Hph6vU'
+	}
+
+	var url = 'https://maps.googleapis.com/maps/api/geocode/json?' + queryString.stringify(requestParameters)
+
+	request(url, function (error, response, body)
+	{
+		if (!error && response.statusCode == 200)
+		{
+			var place = JSON.parse(body).results[0]
+
+			address1 = '';
+			address2 = '';
+			if (place && place.address_components)
+			{
+				address1 = [
+					(place.address_components[1] && place.address_components[1].short_name || ''),
+					(place.address_components[0] && place.address_components[0].short_name || '')
+				].join(' ')
+
+				address2 = [
+						(place.address_components[0] && place.address_components[0].short_name || ''),
+						(place.address_components[1] && place.address_components[1].short_name || ''),
+						(place.address_components[2] && place.address_components[2].short_name || '')
+					].join(' ')
+
+				var _address = address1 + '(' + address2 + ')'
+
+				deferred.resolve({
+					address: _address,
+					location: Tools.getTransformCoords(place.geometry.location.lng+"", place.geometry.location.lat+"")
+				})
+			}
+			else
+			{
+				deferred.reject({
+					error: 'ADDRESSES_NOT_FOUND',
+					details: address
+				})
+			}
+		}
+		else
+		{
+			deferred.reject(error)
+		}
+	})
+
+	return deferred.promise()
+}
+
+function getConnections(startAddress, endAddress)
+{
+	var requestParams = {
+		SID: 'A=16@O= ' + startAddress.address + '@X=' + startAddress.location.x + '@Y=' + startAddress.location.y,
+		getstop: 'true',
+		ZID: 'A=16@O= ' + endAddress.address + '@X=' + endAddress.location.x + '@Y=' + endAddress.location.y,
+	}
+
+	var url = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify(requestParams)
+
+	console.log(url)
+
+	return Tools.getData(url).done(function(resp)
+	{
+		return url
+	})
+}
 
 
 module.exports = router

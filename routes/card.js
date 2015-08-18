@@ -16,7 +16,6 @@ var router = express.Router()
 var request = require('request')
 var queryString = require('querystring')
 var cheerio = require('cheerio')
-var Deferred = require('Deferred')
 
 var Tools = require('./tools')
 
@@ -25,7 +24,7 @@ var Tools = require('./tools')
 	End-Point to query card's balance
 
 	@param identifier Card's identifier
-	
+
 	@return Returns a string with the balance
  */
 router.get('/balance', function(req, res, next)
