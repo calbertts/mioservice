@@ -38,7 +38,23 @@ router.get('/connections', function (req, res, next) {
           address2: arguments['1']
         })
         res.end()*/
-        getConnections(res, arguments['0'], arguments['1'])
+        var testStartAddress = {
+          location: {
+            x: -76535256,
+            y: 3437511
+          }
+        }
+
+        var testEndAddress = {
+          location: {
+            x: -76485106,
+            y: 3469071
+          }
+        }
+
+        getConnections(res, testStartAddress, testEndAddress)
+        // getConnections(res, arguments['0'], arguments['1'])
+
         /* getConnectionsForm(arguments['0'], arguments['1']).then(function (resp) {
           var $ = cheerio.load(resp)
           var formURL = host + $('form#HFSQuery').attr('action')
@@ -160,7 +176,11 @@ function getConnections (res, startAddress, endAddress) {
   var data = {}
   data.mode = 'lessWalk'
 
-  var dataForm1 = {
+  var startPointURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
+    ld: 'std'
+  })
+
+  var startPointForm = {
     queryPageDisplayed: 'yes',
     REQ0JourneyStopsS0A: '255',
     REQ0JourneyStopsS0G: '',
@@ -176,30 +196,28 @@ function getConnections (res, startAddress, endAddress) {
     REQ0HafasSearchForw: '1'
   }
 
-  // Ir al formulario de planear viaje
+  // Form to plan a travel
   request.post(
-      'http://190.216.202.34:8080/bin/query.bin/hn?ld=std&OK',
-      {form: dataForm1},
+      startPointURL,
+      {form: startPointForm},
       function (error, response, body) {
         if (!error && response.statusCode === 200) {
           var seqnr = body.match(/seqnr=([^&]*)/)[1]
           var ident = body.match(/ident=([^&]*)/)[1]
 
-          // Seleccionar el primer punto del mapa
-          var firstMapParams = {
+          // Select the start position
+          var firstMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
             ld: 'std',
             seqnr: seqnr,
             ident: ident,
-            SID: 'A=16@O=Seleccionar%C2%A0en%C2%A0el%C2%A0mapa@X=' + startAddress.location.x + '@Y=' + endAddress.location.y,
+            SID: 'A=16@O=Seleccionar%C2%A0en%C2%A0el%C2%A0mapa@X=' + startAddress.location.x + '@Y=' + startAddress.location.y,
             getstop: 'true'
-          }
-          var firstMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify(firstMapParams))
+          }))
 
           Tools.getData(firstMapURL).done(function (resp) {
-            // Ya en el formulario principal
-            var seqnr = resp.match(/seqnr=[^&]*/)[0]
+            seqnr = resp.match(/seqnr=([^&]*)/)[1]
 
-            var dataForm2 = {
+            var endPointForm = {
               queryPageDisplayed: 'yes',
               REQ0JourneyStopsS0A: '16',
               REQ0JourneyStopsS0K: 'depTupel:' + startAddress.location.x,
@@ -214,18 +232,29 @@ function getConnections (res, startAddress, endAddress) {
               REQ0HafasSearchForw: '1'
             }
 
-            // Seleccionar el segundo punto del mapa
+            var endPointURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
+              ld: 'std',
+              seqnr: seqnr,
+              ident: ident
+            })
+
             request.post(
-                'http://190.216.202.34:8080/bin/query.bin/hn?ld=std&' + seqnr + '&' + ident + '&OK',
-                {form: dataForm2},
+                endPointURL,
+                {form: endPointForm},
                 function (error, response, body) {
                   if (!error && response.statusCode === 200) {
+                    seqnr = body.match(/seqnr=([^&]*)/)[1]
 
-                    var seqnr = body.match(/seqnr=[^&]*/)[0]
-                    var secondMapURL = 'http://190.216.202.34:8080/bin/query.bin/hn?ld=std&' + seqnr + '&' + ident + '&ZID=A=16@O=Seleccionar%C2%A0en%C2%A0el%C2%A0mapa@X=' + endAddress.location.x + '@Y=' + endAddress.location.y + '&getstop=true'
+                    // Select the end position
+                    var secondMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
+                      ld: 'std',
+                      seqnr: seqnr,
+                      ident: ident,
+                      ZID: 'A=16@O=Seleccionar%C2%A0en%C2%A0el%C2%A0mapa@X=' + endAddress.location.x + '@Y=' + endAddress.location.y,
+                      getstop: 'true'
+                    }))
 
                     Tools.getData(secondMapURL).done(function (resp) {
-
                       var connectionsForm = {
                         queryPageDisplayed: 'yes',
                         REQ0JourneyStopsS0A: '16',
@@ -243,14 +272,15 @@ function getConnections (res, startAddress, endAddress) {
 
                       var actionURL = 'http://190.216.202.34:8080' + resp.match(/action="[^]*#focus"/)[0].replace(/action=|"/g, '')
 
+                      console.log('actionURL => ', actionURL)
+
                       // Solicitar las conexiones
                       request.post(
                           actionURL,
                           {form: connectionsForm},
                           function (error, response, body) {
                             if (!error && response.statusCode === 200) {
-
-                              var seqnr = body.match(/seqnr=[^&]*/)[0]
+                              seqnr = body.match(/seqnr=([^&]*)/)[1]
                               var connsPrefix = body.match(/guiVCtrl_connection_detailsOut_select_[^\"]*/gm)
 
                               // Validar si se obtuvieron las conexiones
@@ -287,7 +317,14 @@ function getConnections (res, startAddress, endAddress) {
                                 }
 
                                 // Retornar las coordenadas de la primera conexión
-                                var mapURL = 'http://190.216.202.34:8080/bin/query.bin/hn?ld=std&' + seqnr + '&' + ident + '&ujm=1&&MapConnectionId=' + connFinal + '&SetGlobalOptionGO_callMapFromPosition=tpDetailsRouteComplete'
+                                var mapURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
+                                  ld: 'std',
+                                  seqnr: seqnr,
+                                  ident: ident,
+                                  ujm: 1,
+                                  MapConnectionId: connFinal,
+                                  SetGlobalOptionGO_callMapFromPosition: 'tpDetailsRouteComplete'
+                                })
 
                                 request.post(
                                   mapURL,
@@ -352,8 +389,7 @@ function getConnections (res, startAddress, endAddress) {
                                         res.end()
                                       }
                                     }
-                                  }
-                                )
+                                  })
                               } else {
                                 var msgError = 'No se pudieron obtener las conexiones'
                                 console.error(msgError)
