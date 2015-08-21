@@ -38,22 +38,9 @@ router.get('/connections', function (req, res, next) {
           address2: arguments['1']
         })
         res.end()*/
-        var testStartAddress = {
-          location: {
-            x: -76535256,
-            y: 3437511
-          }
-        }
 
-        var testEndAddress = {
-          location: {
-            x: -76485106,
-            y: 3469071
-          }
-        }
-
-        getConnections(res, testStartAddress, testEndAddress)
-        // getConnections(res, arguments['0'], arguments['1'])
+        // getConnections(res, testStartAddress, testEndAddress)
+        getConnections(res, arguments['0'], arguments['1'])
 
         /* getConnectionsForm(arguments['0'], arguments['1']).then(function (resp) {
           var $ = cheerio.load(resp)
@@ -156,26 +143,7 @@ function queryGMapsFromAddress (address) {
   return deferred.promise()
 }
 
-/* function getConnectionsForm (startAddress, endAddress) {
-  var requestParams = {
-    SID: 'A=16@O= ' + startAddress.address + '@X=' + startAddress.location.x + '@Y=' + startAddress.location.y,
-    getstop: 'true',
-    ZID: 'A=16@O= ' + endAddress.address + '@X=' + endAddress.location.x + '@Y=' + endAddress.location.y
-  }
-
-  var url = host + '/bin/query.bin/hn?' + queryString.stringify(requestParams)
-
-  // console.log(url)
-
-  return Tools.getData(url).done(function (resp) {
-    return url
-  })
-}*/
-
 function getConnections (res, startAddress, endAddress) {
-  var data = {}
-  data.mode = 'lessWalk'
-
   var startPointURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
     ld: 'std'
   })
@@ -202,8 +170,10 @@ function getConnections (res, startAddress, endAddress) {
       {form: startPointForm},
       function (error, response, body) {
         if (!error && response.statusCode === 200) {
-          var seqnr = body.match(/seqnr=([^&]*)/)[1]
+          var seqnr = 1// body.match(/seqnr=([^&]*)/)[1]
           var ident = body.match(/ident=([^&]*)/)[1]
+
+          console.log(seqnr)
 
           // Select the start position
           var firstMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
@@ -214,8 +184,12 @@ function getConnections (res, startAddress, endAddress) {
             getstop: 'true'
           }))
 
+          // console.log('firstMapURL => ', firstMapURL)
+
           Tools.getData(firstMapURL).done(function (resp) {
-            seqnr = resp.match(/seqnr=([^&]*)/)[1]
+            seqnr = 2// resp.match(/seqnr=([^&]*)/)[1]
+
+            console.log(seqnr)
 
             var endPointForm = {
               queryPageDisplayed: 'yes',
@@ -238,12 +212,16 @@ function getConnections (res, startAddress, endAddress) {
               ident: ident
             })
 
+            // console.log('endPointURL => ', endPointURL)
+
             request.post(
                 endPointURL,
                 {form: endPointForm},
                 function (error, response, body) {
                   if (!error && response.statusCode === 200) {
-                    seqnr = body.match(/seqnr=([^&]*)/)[1]
+                    seqnr = 3 // body.match(/seqnr=([^&]*)/)[1]
+
+                    console.log(seqnr)
 
                     // Select the end position
                     var secondMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
@@ -254,159 +232,176 @@ function getConnections (res, startAddress, endAddress) {
                       getstop: 'true'
                     }))
 
+                    // console.log('secondMapURL => ', secondMapURL)
+
                     Tools.getData(secondMapURL).done(function (resp) {
-                      var connectionsForm = {
-                        queryPageDisplayed: 'yes',
-                        REQ0JourneyStopsS0A: '16',
-                        REQ0JourneyStopsS0K: 'depTupel:' + startAddress.location.x,
-                        REQ0JourneyStopsZ0A: '16',
-                        REQ0JourneyStopsZ0K: 'arrTupel:' + endAddress.location.x,
-                        REQ0HafasUnsharpSearch: '1',
-                        existUnsharpSearch: 'yes',
-                        REQ0JourneyDate: Tools.getDate(),
-                        wDayExt0: 'Lu|Ma|Mi|Ju|Vi|Sá|Do',
-                        REQ0JourneyTime: Tools.getTime(),
-                        REQ0HafasSearchForw: '1',
-                        start: 'Buscar+conexión'
-                      }
-
-                      var actionURL = 'http://190.216.202.34:8080' + resp.match(/action="[^]*#focus"/)[0].replace(/action=|"/g, '')
-
-                      console.log('actionURL => ', actionURL)
-
-                      // Solicitar las conexiones
-                      request.post(
-                          actionURL,
-                          {form: connectionsForm},
-                          function (error, response, body) {
-                            if (!error && response.statusCode === 200) {
-                              seqnr = body.match(/seqnr=([^&]*)/)[1]
-                              var connsPrefix = body.match(/guiVCtrl_connection_detailsOut_select_[^\"]*/gm)
-
-                              // Validar si se obtuvieron las conexiones
-                              if (connsPrefix) {
-                                connsPrefix = connsPrefix.map(function (conn) {
-                                  return conn.replace(/guiVCtrl_connection_detailsOut_select_/, '')
-                                })
-
-                                var cheerio = require('cheerio')
-                                var $ = cheerio.load(body)
-
-                                var tableConns = $('.resultTable').first()
-
-                                // Elegir la opcion con menos conexiones o la que requiera caminar menos
-                                var connFinal = 0
-
-                                if (data.mode === 'lessBuses') {
-                                  var max = 100
-
-                                  tableConns.find(':checked').closest('tr').each(function (item) {
-                                    var conns = Number($(this).find('td:nth-child(7)').text())
-
-                                    if (conns < max) {
-                                      max = conns
-                                      connFinal = $(this).find('input').first().parent().html().match(/guiVCtrl_connection_detailsOut_select_[^\"]*/)[0].replace(/guiVCtrl_connection_detailsOut_select_/, '')
-                                    }
-                                  })
-
-                                  // console.log('\nConexión con menos integraciones: ', connFinal, ' #', max)
-                                } else if (data.mode === 'lessWalk') {
-                                  connFinal = tableConns.find(':checked').closest('tr').first().find('input').first().parent().html().match(/guiVCtrl_connection_detailsOut_select_[^\"]*/)[0].replace(/guiVCtrl_connection_detailsOut_select_/, '')
-
-                                  // console.log('\nConexión para caminar menos: ', connFinal)
-                                }
-
-                                // Retornar las coordenadas de la primera conexión
-                                var mapURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
-                                  ld: 'std',
-                                  seqnr: seqnr,
-                                  ident: ident,
-                                  ujm: 1,
-                                  MapConnectionId: connFinal,
-                                  SetGlobalOptionGO_callMapFromPosition: 'tpDetailsRouteComplete'
-                                })
-
-                                request.post(
-                                  mapURL,
-                                  function (error, response, body) {
-                                    if (!error && response.statusCode === 200) {
-                                      var dataRoute = body.match(/function init_jsmapconnection[^\;]*/gm)[0].replace(/\n/g, '').replace(/function init_jsmapconnection\(Map\)\{var conn=eval\(/, '').replace(/(\)|\(|\'\+\')/g, '')
-
-                                      var wholeRoute = eval('(' + dataRoute + ')')
-
-                                      var route = eval('(' + wholeRoute + ')')
-                                      var sections = route.sections
-
-                                      // Analisis de tiempos para caminar
-                                      for (var x = 0; x < sections.length; x++) {
-                                        var _section = sections[x]
-
-                                        if (_section.type === 'GIS_ROUTE' || _section.type === 'WALK') {
-                                          var locations = _section.locations
-
-                                          var loct1 = locations[0].dep
-                                          var loct2 = locations[1].arr
-
-                                          var _data = loct1.split(':')
-                                          var depH = Number(_data[0])
-                                          var depM = Number(_data[1])
-
-                                          var _data2 = loct2.split(':')
-                                          var arrH = Number(_data2[0])
-                                          var arrM = Number(_data2[1])
-
-                                          _section.timeToWalk = (arrH - depH) + ':' + (arrM - depM)
-                                        }
-                                      }
-
-                                      // console.log('\nPlan de viaje retornado: \n')
-                                      for (var i = 0; i < sections.length; i++) {
-                                        var section = sections[i]
-
-                                        if ('name' in section) {
-                                          // console.log('\nToma el bus: ', section.name)
-                                        }
-
-                                        // Mostrar paradas
-                                        var stops = section.locations
-
-                                        for (var j = 0; j < stops.length; j++) {
-                                          var stop = stops[j]
-
-                                          if ('name' in stop) {
-                                            // console.log('Parada: ', stop.name)
-                                          }
-                                        }
-                                      }
-
-                                      // console.log(sections)
-                                      // console.log(wholeRoute)
-                                      route.sections = sections
-                                      // console.log(wholeRoute)
-
-                                      if (res) {
-                                        res.json({status: true, route: route})
-                                        res.end()
-                                      }
-                                    }
-                                  })
-                              } else {
-                                var msgError = 'No se pudieron obtener las conexiones'
-                                console.error(msgError)
-
-                                if (res) {
-                                  res.json({status: false, msg: msgError})
-                                  res.end()
-                                }
-                              }
-                            }
-                          }
-                      )
+                      getConn(res, ident, startAddress, endAddress)
                     })
                   }
                 }
             )
           })
+        }
+      }
+  )
+}
+
+function getConn (res, ident, startAddress, endAddress) {
+  var data = {}
+  data.mode = 'lessWalk'
+
+  var connectionsForm = {
+    queryPageDisplayed: 'yes',
+    REQ0JourneyStopsS0A: '16',
+    REQ0JourneyStopsS0K: 'depTupel:' + startAddress.location.x,
+    REQ0JourneyStopsZ0A: '16',
+    REQ0JourneyStopsZ0K: 'arrTupel:' + endAddress.location.x,
+    REQ0HafasUnsharpSearch: '1',
+    existUnsharpSearch: 'yes',
+    REQ0JourneyDate: Tools.getDate(),
+    wDayExt0: 'Lu|Ma|Mi|Ju|Vi|Sá|Do',
+    REQ0JourneyTime: Tools.getTime(),
+    REQ0HafasSearchForw: '1',
+    start: 'Buscar+conexión'
+  }
+
+  var actionURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
+    ld: 'std',
+    seqnr: 4,
+    ident: ident
+  }))
+  // var actionURL = 'http://190.216.202.34:8080' + resp.match(/action="[^]*#focus"/)[0].replace(/action=|"/g, '')
+
+  console.log('actionURL => ', actionURL)
+
+  // Solicitar las conexiones
+  request.post(
+      actionURL,
+      {form: connectionsForm},
+      function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+          var seqnr = 5 // body.match(/seqnr=([^&]*)/)[1]
+
+          console.log(seqnr)
+
+          var connsPrefix = body.match(/guiVCtrl_connection_detailsOut_select_[^\"]*/gm)
+
+          // Validar si se obtuvieron las conexiones
+          if (connsPrefix) {
+            connsPrefix = connsPrefix.map(function (conn) {
+              return conn.replace(/guiVCtrl_connection_detailsOut_select_/, '')
+            })
+
+            var cheerio = require('cheerio')
+            var $ = cheerio.load(body)
+
+            var tableConns = $('.resultTable').first()
+
+            // Elegir la opcion con menos conexiones o la que requiera caminar menos
+            var connFinal = 0
+
+            if (data.mode === 'lessBuses') {
+              var max = 100
+
+              tableConns.find(':checked').closest('tr').each(function (item) {
+                var conns = Number($(this).find('td:nth-child(7)').text())
+
+                if (conns < max) {
+                  max = conns
+                  connFinal = $(this).find('input').first().parent().html().match(/guiVCtrl_connection_detailsOut_select_[^\"]*/)[0].replace(/guiVCtrl_connection_detailsOut_select_/, '')
+                }
+              })
+
+              // console.log('\nConexión con menos integraciones: ', connFinal, ' #', max)
+            } else if (data.mode === 'lessWalk') {
+              connFinal = tableConns.find(':checked').closest('tr').first().find('input').first().parent().html().match(/guiVCtrl_connection_detailsOut_select_[^\"]*/)[0].replace(/guiVCtrl_connection_detailsOut_select_/, '')
+
+              // console.log('\nConexión para caminar menos: ', connFinal)
+            }
+
+            // Retornar las coordenadas de la primera conexión
+            var mapURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
+              ld: 'std',
+              seqnr: seqnr,
+              ident: ident,
+              ujm: 1,
+              MapConnectionId: connFinal,
+              SetGlobalOptionGO_callMapFromPosition: 'tpDetailsRouteComplete'
+            })
+
+            request.post(
+              mapURL,
+              function (error, response, body) {
+                if (!error && response.statusCode === 200) {
+                  var dataRoute = body.match(/function init_jsmapconnection[^\;]*/gm)[0].replace(/\n/g, '').replace(/function init_jsmapconnection\(Map\)\{var conn=eval\(/, '').replace(/(\)|\(|\'\+\')/g, '')
+
+                  var wholeRoute = eval('(' + dataRoute + ')')
+
+                  var route = eval('(' + wholeRoute + ')')
+                  var sections = route.sections
+
+                  // Analisis de tiempos para caminar
+                  for (var x = 0; x < sections.length; x++) {
+                    var _section = sections[x]
+
+                    if (_section.type === 'GIS_ROUTE' || _section.type === 'WALK') {
+                      var locations = _section.locations
+
+                      var loct1 = locations[0].dep
+                      var loct2 = locations[1].arr
+
+                      var _data = loct1.split(':')
+                      var depH = Number(_data[0])
+                      var depM = Number(_data[1])
+
+                      var _data2 = loct2.split(':')
+                      var arrH = Number(_data2[0])
+                      var arrM = Number(_data2[1])
+
+                      _section.timeToWalk = (arrH - depH) + ':' + (arrM - depM)
+                    }
+                  }
+
+                  // console.log('\nPlan de viaje retornado: \n')
+                  for (var i = 0; i < sections.length; i++) {
+                    var section = sections[i]
+
+                    if ('name' in section) {
+                      // console.log('\nToma el bus: ', section.name)
+                    }
+
+                    // Mostrar paradas
+                    var stops = section.locations
+
+                    for (var j = 0; j < stops.length; j++) {
+                      var stop = stops[j]
+
+                      if ('name' in stop) {
+                        // console.log('Parada: ', stop.name)
+                      }
+                    }
+                  }
+
+                  // console.log(sections)
+                  // console.log(wholeRoute)
+                  route.sections = sections
+                  // console.log(wholeRoute)
+
+                  if (res) {
+                    res.json({status: true, route: route})
+                    res.end()
+                  }
+                }
+              })
+          } else {
+            var msgError = 'No se pudieron obtener las conexiones'
+            console.error(msgError)
+
+            if (res) {
+              res.json({status: false, msg: msgError})
+              res.end()
+            }
+          }
         }
       }
   )
