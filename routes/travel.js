@@ -270,7 +270,6 @@ function getConn (res, ident, startAddress, endAddress) {
     seqnr: 4,
     ident: ident
   }))
-  // var actionURL = 'http://190.216.202.34:8080' + resp.match(/action="[^]*#focus"/)[0].replace(/action=|"/g, '')
 
   console.log('actionURL => ', actionURL)
 

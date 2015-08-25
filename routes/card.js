@@ -14,6 +14,8 @@ var express = require('express')
 var router = express.Router()
 var request = require('request')
 
+var Tools = require('./tools')
+
 /**
   End-Point to query card's balance
 
@@ -24,8 +26,11 @@ var request = require('request')
 router.get('/balance', function (req, res, next) {
   if ('identifier' in req.query) {
     var url = 'http://190.216.202.35/saldo/pruebasaldo.php'
+
+    var cardNumber = Tools.formatCardNumber(req.query.identifier)
+
     var form = {
-      numero: req.query.identifier,
+      numero: cardNumber,
       Enviar: 'Saldo'
     }
 
@@ -38,7 +43,7 @@ router.get('/balance', function (req, res, next) {
 
           if (balance) {
             res.json({
-              identifier: req.query.identifier,
+              identifier: cardNumber,
               balance: balance[1]
             })
           } else {

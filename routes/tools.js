@@ -70,3 +70,10 @@ exports.getTime = function () {
 exports.isNumber = function (n) {
   return !isNaN(parseFloat(n)) && isFinite(n)
 }
+
+exports.formatCardNumber = function (cardNumber) {
+  // 19.06-00854469-1
+  var cardNumberFormatted = cardNumber.slice(0, 2) + '.' + cardNumber.slice(2, 4) + '-' + cardNumber.slice(4, 12) + '-' + cardNumber.slice(12)
+  console.log(cardNumberFormatted)
+  return cardNumberFormatted
+}
