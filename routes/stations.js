@@ -28,8 +28,8 @@ var Tools = require('./tools')
   @return Returns an array with information of each near station
  */
 router.get('/nearby', function (req, res, next) {
-  if ('lat' in req.query && 'lng' in req.query) {
-    var pointData = point.split(',')
+  if ('point' in req.query) {
+    var pointData = req.query.point.split(',')
 
     if (pointData.length > 1) {
       var lat = pointData[0]
