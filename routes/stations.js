@@ -28,50 +28,43 @@ var Tools = require('./tools')
   @return Returns an array with information of each near station
  */
 router.get('/nearby', function (req, res, next) {
-  if ('point' in req.query) {
-    var pointData = req.query.point.split(',')
+  if ('lat' in req.query && 'lng' in req.query) {
+    var point = Tools.getTransformCoords(req.query.lng, req.query.lat)
+    var max = req.query.max || 5
 
-    if (pointData.length > 1) {
-      var lat = pointData[0]
-      var lng = pointData[1]
+    var requestData = {
+      performLocating: 2,
+      tpl: 'stop2json',
+      look_maxno: max,
+      look_stopclass: 1023,
+      look_x: point.x,
+      look_y: point.y
+    }
 
-      var point = Tools.getTransformCoords(lng, lat)
-      var max = req.query.max || 5
+    var url = 'http://190.216.202.34:8080/bin/query.bin/hny?' + queryString.stringify(requestData)
 
-      var requestData = {
-        performLocating: 2,
-        tpl: 'stop2json',
-        look_maxno: max,
-        look_stopclass: 1023,
-        look_x: point.x,
-        look_y: point.y
-      }
+    Tools.getData(url).done(function (resp) {
+      var stationsObj = JSON.parse(resp.match(/\{[^<]*/)[0])
 
-      var url = 'http://190.216.202.34:8080/bin/query.bin/hny?' + queryString.stringify(requestData)
-
-      Tools.getData(url).done(function (resp) {
-        var stationsObj = JSON.parse(resp.match(/\{[^<]*/)[0])
-
-        res.json({
-          status: 'OK',
-          nearbyStations: stationsObj.stops.map(function (item, index) {
-            var coords = Tools.getTransformCoordsForMaps(item.x, item.y)
-            return {
-              id: item.extId,
-              name: item.name,
-              lat: coords.y,
-              lng: coords.x,
-              dist: item.dist
-            }
-          })
+      res.json({
+        status: 'OK',
+        nearbyStations: stationsObj.stops.map(function (item, index) {
+          var coords = Tools.getTransformCoordsForMaps(item.x, item.y)
+          return {
+            id: item.extId,
+            name: item.name,
+            lat: coords.y,
+            lng: coords.x,
+            dist: item.dist
+          }
         })
       })
-    } else {
-      res.json({
-        status: 'ERROR',
-        message: 'MISSING_COORDS'
-      })
-    }
+    })
+  } else {
+    res.json({
+      status: 'ERROR',
+      message: 'MISSING_COORDS'
+    })
   }
 })
 
