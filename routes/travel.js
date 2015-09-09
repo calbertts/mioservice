@@ -138,8 +138,6 @@ function getConnections (res, startAddress, endAddress) {
           var seqnr = 1 // body.match(/seqnr=([^&]*)/)[1]
           var ident = body.match(/ident=([^&]*)/)[1]
 
-          // console.log(seqnr)
-
           // Select the start position
           var firstMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
             ld: 'std',
@@ -226,7 +224,7 @@ function getConn (res, ident, startAddress, endAddress) {
     ident: ident
   }))
 
-  // Solicitar las conexiones
+  // Request the connections
   request.post(
       actionURL,
       {form: connectionsForm},
@@ -236,7 +234,7 @@ function getConn (res, ident, startAddress, endAddress) {
 
           var connsPrefix = body.match(/guiVCtrl_connection_detailsOut_select_[^\"]*/gm)
 
-          // Validar si se obtuvieron las conexiones
+          // Check if there are connections found
           if (connsPrefix) {
             connsPrefix = connsPrefix.map(function (conn) {
               return conn.replace(/guiVCtrl_connection_detailsOut_select_/, '')
@@ -247,7 +245,7 @@ function getConn (res, ident, startAddress, endAddress) {
 
             var tableConns = $('.resultTable').first()
 
-            // Elegir la opcion con menos conexiones o la que requiera caminar menos
+            // Choose the connection with less busses
             var connFinal = 0
 
             if (data.mode === 'lessBuses') {
@@ -284,7 +282,7 @@ function getConn (res, ident, startAddress, endAddress) {
                   var route = eval('(' + wholeRoute + ')')
                   var sections = route.sections
 
-                  // Analisis de tiempos para caminar
+                  // Anylize the walking time
                   for (var x = 0; x < sections.length; x++) {
                     var _section = sections[x]
 
