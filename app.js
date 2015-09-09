@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
-// Por REST
+// End-points
 app.use('/stations', stations)
 app.use('/buses', buses)
 app.use('/card', card)
