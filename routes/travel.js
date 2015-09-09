@@ -13,13 +13,10 @@
 var express = require('express')
 var router = express.Router()
 var queryString = require('querystring')
-var cheerio = require('cheerio')
 var request = require('request')
 var Deferred = require('Deferred')
 
 var Tools = require('./tools')
-
-// var host = 'http://190.216.202.34:8080'
 
 /**
   End-Point to create a travel plan
@@ -33,48 +30,7 @@ router.get('/connections', function (req, res, next) {
   if ('startAddress' in req.query && 'endAddress' in req.query) {
     Deferred.when(queryGMapsFromAddress(req.query.startAddress), queryGMapsFromAddress(req.query.endAddress)).then(
       function sucess (addresses) {
-        /* res.json({
-          address1: arguments['0'],
-          address2: arguments['1']
-        })
-        res.end()*/
-
-        // getConnections(res, testStartAddress, testEndAddress)
         getConnections(res, arguments['0'], arguments['1'])
-
-        /* getConnectionsForm(arguments['0'], arguments['1']).then(function (resp) {
-          var $ = cheerio.load(resp)
-          var formURL = host + $('form#HFSQuery').attr('action')
-
-          console.log('URL =>', formURL)
-
-          var requestParameters = {
-            queryPageDisplayed: 'yes',
-            REQ0JourneyStopsS0A: '16',
-            REQ0JourneyStopsS0K: 'depTupel:-76535256',
-            REQ0JourneyStopsZ0A: '16',
-            REQ0JourneyStopsZ0K: 'arrTupel:-76485106',
-            REQ0HafasUnsharpSearch: '1',
-            existUnsharpSearch: 'yes',
-            REQ0JourneyDate: 'Ma, 18.08.15',
-            wDayExt0: 'Lu|Ma|Mi|Ju|Vi|Sá|Do',
-            REQ0JourneyTime: '01:30',
-            REQ0HafasSearchForw: '1',
-            start: 'Buscar+conexión'
-          }
-
-          request.post(
-              formURL,
-              {form: requestParameters},
-              function (error, response, body) {
-                if (!error && response.statusCode === 200) {
-                  // $ = cheerio.load(body)
-                  res.write(body)
-                  res.end()
-                }
-              }
-          )
-        }) */
       },
       function error (error) {
         res.json({
@@ -179,7 +135,7 @@ function getConnections (res, startAddress, endAddress) {
       {form: startPointForm},
       function (error, response, body) {
         if (!error && response.statusCode === 200) {
-          var seqnr = 1// body.match(/seqnr=([^&]*)/)[1]
+          var seqnr = 1 // body.match(/seqnr=([^&]*)/)[1]
           var ident = body.match(/ident=([^&]*)/)[1]
 
           // console.log(seqnr)
@@ -193,12 +149,8 @@ function getConnections (res, startAddress, endAddress) {
             getstop: 'true'
           }))
 
-          // console.log('firstMapURL => ', firstMapURL)
-
           Tools.getData(firstMapURL).done(function (resp) {
-            seqnr = 2// resp.match(/seqnr=([^&]*)/)[1]
-
-            // console.log(seqnr)
+            seqnr = 2 // resp.match(/seqnr=([^&]*)/)[1]
 
             var endPointForm = {
               queryPageDisplayed: 'yes',
@@ -221,16 +173,12 @@ function getConnections (res, startAddress, endAddress) {
               ident: ident
             })
 
-            // console.log('endPointURL => ', endPointURL)
-
             request.post(
                 endPointURL,
                 {form: endPointForm},
                 function (error, response, body) {
                   if (!error && response.statusCode === 200) {
                     seqnr = 3 // body.match(/seqnr=([^&]*)/)[1]
-
-                    // console.log(seqnr)
 
                     // Select the end position
                     var secondMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
@@ -240,8 +188,6 @@ function getConnections (res, startAddress, endAddress) {
                       ZID: 'A=16@O=Seleccionar%C2%A0en%C2%A0el%C2%A0mapa@X=' + endAddress.location.x + '@Y=' + endAddress.location.y,
                       getstop: 'true'
                     }))
-
-                    // console.log('secondMapURL => ', secondMapURL)
 
                     Tools.getData(secondMapURL).done(function (resp) {
                       getConn(res, ident, startAddress, endAddress)
@@ -280,8 +226,6 @@ function getConn (res, ident, startAddress, endAddress) {
     ident: ident
   }))
 
-  // console.log('actionURL => ', actionURL)
-
   // Solicitar las conexiones
   request.post(
       actionURL,
@@ -291,9 +235,6 @@ function getConn (res, ident, startAddress, endAddress) {
           var seqnr = 5
 
           var connsPrefix = body.match(/guiVCtrl_connection_detailsOut_select_[^\"]*/gm)
-
-          /*res.write(body)
-          res.end()*/
 
           // Validar si se obtuvieron las conexiones
           if (connsPrefix) {
@@ -320,15 +261,10 @@ function getConn (res, ident, startAddress, endAddress) {
                   connFinal = $(this).find('input').first().parent().html().match(/guiVCtrl_connection_detailsOut_select_[^\"]*/)[0].replace(/guiVCtrl_connection_detailsOut_select_/, '')
                 }
               })
-
-              // console.log('\nConexión con menos integraciones: ', connFinal, ' #', max)
             } else if (data.mode === 'lessWalk') {
               connFinal = tableConns.find(':checked').closest('tr').first().find('input').first().parent().html().match(/guiVCtrl_connection_detailsOut_select_[^\"]*/)[0].replace(/guiVCtrl_connection_detailsOut_select_/, '')
-
-              // console.log('\nConexión para caminar menos: ', connFinal)
             }
 
-            // Retornar las coordenadas de la primera conexión
             var mapURL = 'http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
               ld: 'std',
               seqnr: seqnr,
@@ -345,11 +281,7 @@ function getConn (res, ident, startAddress, endAddress) {
                   var dataRoute = body.match(/function init_jsmapconnection[^\;]*/gm)[0].replace(/\n/g, '').replace(/function init_jsmapconnection\(Map\)\{var conn=eval\(/, '').replace(/(\)|\(|\'\+\')/g, '')
 
                   var wholeRoute = eval('(' + dataRoute + ')')
-
                   var route = eval('(' + wholeRoute + ')')
-
-                  // res.json(route.sections)
-
                   var sections = route.sections
 
                   // Analisis de tiempos para caminar
@@ -374,30 +306,21 @@ function getConn (res, ident, startAddress, endAddress) {
                     }
                   }
 
-                  // console.log('\nPlan de viaje retornado: \n')
                   for (var i = 0; i < sections.length; i++) {
                     var section = sections[i]
 
-                    if ('name' in section) {
-                      // console.log('\nToma el bus: ', section.name)
-                    }
-
-                    // Mostrar paradas
                     var stops = section.locations
 
                     for (var j = 0; j < stops.length; j++) {
                       var stop = stops[j]
 
                       if ('name' in stop) {
-                        // console.log('Parada: ', stop.name)
+                        console.log('Stop: ', stop.name)
                       }
                     }
                   }
 
-                  // console.log(sections)
-                  // console.log(wholeRoute)
                   route.sections = sections
-                  // console.log(wholeRoute)
 
                   if (res) {
                     res.json({status: true, route: route})
@@ -407,7 +330,6 @@ function getConn (res, ident, startAddress, endAddress) {
               })
           } else {
             var msgError = 'No se pudieron obtener las conexiones'
-            // console.error(msgError)
 
             if (res) {
               res.json({status: false, msg: msgError})

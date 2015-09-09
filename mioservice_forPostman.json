@@ -1,0 +1,227 @@
+{
+	"id": "9827255f-32ae-650c-c119-ea8ab86bc080",
+	"name": "MIO Service",
+	"description": "",
+	"order": [
+		"f29fdee5-a725-2d38-ec0c-c1980040d0c3",
+		"a47b7507-6042-888e-9b7f-b0236bd1aa43",
+		"28f7357a-61b1-6ec4-4b18-f2c95d06df5f",
+		"0f601655-dac1-cb12-69ea-b66a7aafc361",
+		"0a1c3fee-8f0c-d0be-ccfe-c29178b30471",
+		"56818641-8dba-e6db-3b17-ed65afa76511",
+		"9afc967f-8f35-302d-28bc-f6093912b56c"
+	],
+	"folders": [],
+	"timestamp": 0,
+	"owner": "44119",
+	"remoteLink": null,
+	"public": false,
+	"requests": [
+		{
+			"id": "0a1c3fee-8f0c-d0be-ccfe-c29178b30471",
+			"headers": "",
+			"url": "http://www.mioservice.calbertts.com/card/balance?identifier=1906008544691",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1440472903297,
+			"name": "Card's balance",
+			"description": "",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080"
+		},
+		{
+			"folder": null,
+			"id": "0f601655-dac1-cb12-69ea-b66a7aafc361",
+			"name": "Bus' info",
+			"dataMode": "params",
+			"data": [],
+			"rawModeData": null,
+			"descriptionFormat": "html",
+			"description": "",
+			"headers": "",
+			"method": "GET",
+			"pathVariables": {},
+			"url": "http://www.mioservice.calbertts.com/buses/journey?journeyId=348249/141831/974362/371098/4095&max=10&mode=dep",
+			"preRequestScript": "",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080"
+		},
+		{
+			"folder": null,
+			"id": "28f7357a-61b1-6ec4-4b18-f2c95d06df5f",
+			"name": "Station's suggestions",
+			"dataMode": "params",
+			"data": [],
+			"rawModeData": null,
+			"descriptionFormat": "html",
+			"description": "",
+			"headers": "",
+			"method": "GET",
+			"pathVariables": {},
+			"url": "http://www.mioservice.calbertts.com/stations/suggestions?search=Terminal",
+			"preRequestScript": "",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080"
+		},
+		{
+			"id": "56818641-8dba-e6db-3b17-ed65afa76511",
+			"headers": "",
+			"url": "http://www.mioservice.calbertts.com/travel/connections?startPoint=3.491510,-76.516814&endPoint=3.458697,-76.556897",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"time": 1440651697234,
+			"name": "Travel's plan",
+			"description": "",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080",
+			"rawModeData": null,
+			"descriptionFormat": "html",
+			"folder": null
+		},
+		{
+			"id": "9afc967f-8f35-302d-28bc-f6093912b56c",
+			"headers": "",
+			"url": "http://www.mioservice.calbertts.com/travel/connections?startAddress=Calle 9C 23 - 64&endAddress=Calle 8 22 - 87",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [
+				{
+					"key": "queryPageDisplayed",
+					"value": "yes",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0JourneyStopsS0A",
+					"value": "16",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0JourneyStopsS0K",
+					"value": "depTupel:-76535256",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0JourneyStopsZ0A",
+					"value": "16",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0JourneyStopsZ0K",
+					"value": "arrTupel:-76485106",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0HafasUnsharpSearch",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "existUnsharpSearch",
+					"value": "yes",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0JourneyDate",
+					"value": "Ma, 18.08.15.",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "wDayExt0",
+					"value": "Lu|Ma|Mi|Ju|Vi|Sá|Do",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0JourneyTime",
+					"value": "1:30",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "REQ0HafasSearchForw",
+					"value": "1",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "start",
+					"value": "Buscar+conexión",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1440217223199,
+			"name": "Travel's plan from Address",
+			"description": "",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080",
+			"responses": []
+		},
+		{
+			"folder": null,
+			"id": "a47b7507-6042-888e-9b7f-b0236bd1aa43",
+			"name": "Station's Info",
+			"dataMode": "params",
+			"data": [],
+			"rawModeData": null,
+			"descriptionFormat": "html",
+			"description": "",
+			"headers": "",
+			"method": "GET",
+			"pathVariables": {},
+			"url": "http://www.mioservice.calbertts.com/stations/info?id=518058&max=10&mode=dep&routes=true&journeys=true",
+			"preRequestScript": "",
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": "{}",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080"
+		},
+		{
+			"id": "f29fdee5-a725-2d38-ec0c-c1980040d0c3",
+			"headers": "",
+			"url": "http://www.mioservice.calbertts.com/stations/nearby?lat=3.442697&lng=-76.527147",
+			"preRequestScript": "",
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "params",
+			"version": 2,
+			"tests": "",
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1440474029956,
+			"name": "Nearby Stations",
+			"description": "",
+			"collectionId": "9827255f-32ae-650c-c119-ea8ab86bc080"
+		}
+	]
+}

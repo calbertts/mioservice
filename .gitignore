@@ -1,1 +1,6 @@
 /node_modules
+/docs
+/routes/old
+/routes/errorCodes.js
+/routes/index.js
+npm-debug.log

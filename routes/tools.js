@@ -1,3 +1,15 @@
+/*
+
+  tools.js
+
+  Useful functions
+
+  @author Carlos Alberto Castaño (@calbertts)
+  @version 1.0
+  @date 13/08/2015
+
+*/
+
 var Deferred = require('Deferred')
 var http = require('http')
 var iconv = require('iconv-lite')
@@ -24,7 +36,7 @@ exports.getData = function (url, data, method) {
   var deferred = new Deferred()
   var respStr = ''
 
-  // Petición HTTP
+  // HTTP Request
   var options = {
     host: '190.216.202.34',
     port: 8080,
@@ -33,7 +45,6 @@ exports.getData = function (url, data, method) {
     agent: false
   }
 
-  // Cargar URL a partir del origen y los destinos
   http.request(options, function (resp) {
     var converterStream = iconv.decodeStream('ISO88591')
     resp.pipe(converterStream)
@@ -46,7 +57,6 @@ exports.getData = function (url, data, method) {
       deferred.resolve(respStr)
     })
   }).on('error', function (e) {
-    console.error('Error la función "getData" con los parametros: ', arguments)
     console.log(e.stack)
   }).end()
 
@@ -72,7 +82,6 @@ exports.isNumber = function (n) {
 }
 
 exports.formatCardNumber = function (cardNumber) {
-  // 19.06-00854469-1
   var cardNumberFormatted = cardNumber.slice(0, 2) + '.' + cardNumber.slice(2, 4) + '-' + cardNumber.slice(4, 12) + '-' + cardNumber.slice(12)
   console.log(cardNumberFormatted)
   return cardNumberFormatted
