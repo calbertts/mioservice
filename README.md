@@ -10,5 +10,7 @@ entregada por este servicio.
 El objetivo es exponer esta información de manera agnóstica permitiendo que cualquier 
 desarrollador pueda usarla para crear sus propias aplicaciones.
 
+El archivo mioservice_forPostman.json es una colección para probar la API desde Postman.
+
 Para verla en acción:
 http://docs.mioservice.apiary.io
