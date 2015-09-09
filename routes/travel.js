@@ -85,9 +85,18 @@ router.get('/connections', function (req, res, next) {
       }
     )
   } else if ('startPoint' in req.query && 'endPoint' in req.query) {
-    res.json({
-      ok: 'ok'
-    })
+    var startPointData = req.query.startPoint.split(',')
+    var endPointData = req.query.endPoint.split(',')
+
+    var startPoint = {
+      location: Tools.getTransformCoords(startPointData[1] + '', startPointData[0] + '')
+    }
+
+    var endPoint = {
+      location: Tools.getTransformCoords(endPointData[1] + '', endPointData[0] + '')
+    }
+
+    getConnections(res, startPoint, endPoint)
   }
 })
 
@@ -173,7 +182,7 @@ function getConnections (res, startAddress, endAddress) {
           var seqnr = 1// body.match(/seqnr=([^&]*)/)[1]
           var ident = body.match(/ident=([^&]*)/)[1]
 
-          console.log(seqnr)
+          // console.log(seqnr)
 
           // Select the start position
           var firstMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
@@ -189,7 +198,7 @@ function getConnections (res, startAddress, endAddress) {
           Tools.getData(firstMapURL).done(function (resp) {
             seqnr = 2// resp.match(/seqnr=([^&]*)/)[1]
 
-            console.log(seqnr)
+            // console.log(seqnr)
 
             var endPointForm = {
               queryPageDisplayed: 'yes',
@@ -221,7 +230,7 @@ function getConnections (res, startAddress, endAddress) {
                   if (!error && response.statusCode === 200) {
                     seqnr = 3 // body.match(/seqnr=([^&]*)/)[1]
 
-                    console.log(seqnr)
+                    // console.log(seqnr)
 
                     // Select the end position
                     var secondMapURL = decodeURIComponent('http://190.216.202.34:8080/bin/query.bin/hn?' + queryString.stringify({
@@ -271,7 +280,7 @@ function getConn (res, ident, startAddress, endAddress) {
     ident: ident
   }))
 
-  console.log('actionURL => ', actionURL)
+  // console.log('actionURL => ', actionURL)
 
   // Solicitar las conexiones
   request.post(
@@ -279,11 +288,12 @@ function getConn (res, ident, startAddress, endAddress) {
       {form: connectionsForm},
       function (error, response, body) {
         if (!error && response.statusCode === 200) {
-          var seqnr = 5 // body.match(/seqnr=([^&]*)/)[1]
-
-          console.log(seqnr)
+          var seqnr = 5
 
           var connsPrefix = body.match(/guiVCtrl_connection_detailsOut_select_[^\"]*/gm)
+
+          /*res.write(body)
+          res.end()*/
 
           // Validar si se obtuvieron las conexiones
           if (connsPrefix) {
@@ -337,6 +347,9 @@ function getConn (res, ident, startAddress, endAddress) {
                   var wholeRoute = eval('(' + dataRoute + ')')
 
                   var route = eval('(' + wholeRoute + ')')
+
+                  // res.json(route.sections)
+
                   var sections = route.sections
 
                   // Analisis de tiempos para caminar
@@ -394,7 +407,7 @@ function getConn (res, ident, startAddress, endAddress) {
               })
           } else {
             var msgError = 'No se pudieron obtener las conexiones'
-            console.error(msgError)
+            // console.error(msgError)
 
             if (res) {
               res.json({status: false, msg: msgError})

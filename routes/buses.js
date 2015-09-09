@@ -45,6 +45,8 @@ router.get('/journey', function (req, res, next) {
 
     var url = 'http://190.216.202.34:8080/bin/traininfo.bin/hn/' + req.query.journeyId + '/4095?' + queryString.stringify(journeyRequestData)
 
+    console.log(url)
+
     Tools.getData(url).done(function (resp) {
       var $ = cheerio.load(resp)
       var table = $('.resultTable').first()
